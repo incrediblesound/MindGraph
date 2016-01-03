@@ -44,7 +44,8 @@ function processEntry(data){
 			type: 'attr',
 			item: subtype.name,
 			attribute: attr.name,
-			question: 'Does the subtype '+subtype.name+chalk.green(' share attribute ')+attr.name+' with parent?'
+			question: 'Does the subtype '+
+				subtype.name+chalk.green(' share attribute ')+attr.name+' with parent?'
 		}
 	})
 	prompter(queries);

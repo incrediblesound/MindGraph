@@ -31,8 +31,12 @@ module.exports = class KnowledgeBase {
 	}
 	fromJSON(string){
 		var data = JSON.parse(string)
-		this.items = data.items
-		this.edges = data.edges
+		this.items = _.map(data.items, (item) => {
+			return new Item(item.name, item.id);
+		})
+		this.edges = _.map(data.edges, (edge) => {
+			return new Edge(edge.source, edge.target, edge.type);
+		})
 		this.counter = data.counter
 	}
 	addItem(name){
@@ -92,4 +96,3 @@ module.exports = class KnowledgeBase {
 		return false
 	}
 }
-

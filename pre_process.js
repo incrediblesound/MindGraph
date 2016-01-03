@@ -83,7 +83,7 @@ function isADefinition(line){
 		line[2] === 'is'&&
 		aOrAn(line[3])  
 	) || (
-		line[1] === 'is'&&
+		isOrAre(line[1]) &&
 		aOrAn(line[2])
 	))
 }
