@@ -19,5 +19,5 @@ while(input !== 'exit'){
 }
 
 function isAffirmative(input){
-	return input.length && input === 'yes' || input === 'y';
+	return input.length && (input === 'yes' || input === 'y');
 }

@@ -23,6 +23,6 @@ function isAffirmative(query, input){
 	if(query.test !== undefined){
 		return query.test(input);
 	} else {
-		return input.length && input === 'yes' || input === 'y';
+		return input.length && (input === 'yes' || input === 'y');
 	}
 }
