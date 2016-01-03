@@ -2,6 +2,11 @@
 
 MindGraph is a graph storage system that accepts plain english commands and proactively requests information from the user to fill in data it suspects may exist.
 
+MindGraph runs on node, to start it clone the repo and run
+```shell
+$ node main
+```
+
 ## Storage Commands
 
 ### Simple Definition
