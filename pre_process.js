@@ -5,7 +5,7 @@ var singular = _.bind(inflector.singularize, inflector);
 
 
 module.exports = function(input){
-	input = input.toLowerCase().split(' ')
+	input = input.replace(/\?/g, '').toLowerCase().split(' ');
 	if(input.length === 1){
 		return { type: 'keyword', value: input[0] }
 	}
@@ -17,6 +17,15 @@ module.exports = function(input){
 			type: 'isXaY',
 			subtype,
 			parent
+		}
+	}
+	else if(isASimpleQuestion(input)){
+		var item = isThe(input[1]) ? input[2] : input[1];
+		var attribute = input[input.length-1];
+		return {
+			type: 'isXY',
+			item,
+			attribute
 		}
 	}
 	else if(isASimpleDescription(input)){
@@ -31,9 +40,29 @@ module.exports = function(input){
 
 		return { type: 'entry', subtype, parent }
 	}
+	else if(isAQuery(input)){
+		var item = input[input.length-1];
+		return { type: 'query', item }
+	}
 	else if(isAnAdjective(input)){
 		return { type: 'adj', name: input[3] }
 	}
+}
+
+function isASimpleQuestion(line){
+	// is god fake
+	// is the sky blue
+	return (
+		isOrAre(line[0]) &&
+		line.length < 5
+	)
+}
+
+function isAQuery(line){
+	return (
+		line[0] === 'what' &&
+		line[1] === 'is'
+	)
 }
 
 function isASimpleDescription(line){
@@ -41,7 +70,8 @@ function isASimpleDescription(line){
 	// apples have seeds
 	// apples are sweet
 	return (
-		line.length === 3 && 
+		line.length === 3 &&
+		line[0] !== 'what' &&
 		(isOrAre(line[1]) || hasOrHave(line[1]))
 	)
 }
@@ -89,4 +119,8 @@ function isOrAre(word){
 
 function hasOrHave(word){
 	return word === 'has' || word === 'have'
+}
+
+function isThe(word){
+	return word === 'the';
 }

@@ -18,6 +18,9 @@ class Edge {
 	isSubtype(){
 		return this.type === 'SUBTYPE_OF'
 	}
+	isAttribute(){
+		return this.type === 'HAS_ATTRIBUTE'
+	}
 }
 
 module.exports = class KnowledgeBase {
@@ -62,6 +65,15 @@ module.exports = class KnowledgeBase {
 		var results = []
 		_.each(this.edges, (edge) => {
 			if(edge.source === id && edge.isSubtype()){
+				results.push(this.getItem(edge.target));
+			}
+		})
+		return results;
+	}
+	getAttributes(id){
+		var results = []
+		_.each(this.edges, (edge) => {
+			if(edge.source === id && edge.isAttribute()){
 				results.push(this.getItem(edge.target));
 			}
 		})
