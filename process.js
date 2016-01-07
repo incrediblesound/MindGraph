@@ -1,3 +1,5 @@
+'use strict';
+
 var readLine = require('readline-sync');
 var chalk = require('chalk');
 var _ = require('lodash')
@@ -21,7 +23,8 @@ var processMap = {
 	isXaY: processSubtypeQuestion,
 	isXY: processSimpleQuestion,
 	keyword: processKeyword,
-	query: processQuery
+	query: processQuery,
+	complex: complexQuery
 }
 
 module.exports = function(input){
@@ -29,15 +32,16 @@ module.exports = function(input){
 }
 
 function processEntry(data){
-	var parent = k.getItem(data.parent)
-	var subtype = k.getItem(data.subtype)
-	if(parent === false){
-		parent = k.addItem(data.parent)
+	var parent = k.getOrCreateItem(data.parent)
+	var subtype = k.getOrCreateItem(data.subtype)
+	if(data.third !== null){
+		var third = k.getOrCreateItem(data.third);
+		k.addEdge(subtype.id, parent.id, third.id, SUBTYPE);
+		k.addEdge(third.id, parent.id, ATTR);
+	} else {
+		k.addEdge(subtype.id, parent.id, null, SUBTYPE);
 	}
-	if(subtype === false){
-		subtype = k.addItem(data.subtype)
-	}
-	k.addEdge(subtype.id, parent.id, SUBTYPE)
+
 	var parentAttributes = k.getAttributes(parent.id);
 	var queries = _.map(parentAttributes, (attr) => {
 		return {
@@ -53,24 +57,17 @@ function processEntry(data){
 }
 
 function processAdjective(data){
-	var adj = k.getItem(data.name)
-	if(adj === false){
-		adj = k.addItem(data.name)
-	}
+	var adj = k.getOrCreateItem(data.name)
+
 	var src = k.getItem(THING)
 	k.addEdge(src.id, adj.id, ATTR)
 	return false
 }
 
 function processAttribute(data){
-	var attribute = k.getItem(data.attribute)
-	var item = k.getItem(data.item)
-	if(attribute === false){
-		attribute = k.addItem(data.attribute)
-	}
-	if(item === false){
-		item = k.addItem(data.item)
-	}
+	var attribute = k.getOrCreateItem(data.attribute)
+	var item = k.getOrCreateItem(data.item)
+
 	k.addEdge(item.id, attribute.id, ATTR)
 	var parents = k.getParents(item.id)
 	if(parents.length){
@@ -201,6 +198,23 @@ function processSimpleQuestion(data){
 			attribute: data.attribute
 		}]
 	}
+}
+
+function complexQuery(data){
+	let targetId = k.getItem(data.attr).id;
+	let parentId = k.getItem(data.item).id;
+	let edges = _.filter(k.edges, (edge) => {
+		return (
+			edge.target === targetId &&
+			_.contains(edge.parents, parentId)
+		)
+	})
+	edges = _.map(edges, (edge) => {
+		return k.getItem(edge.source);
+	})
+	console.log('The '+chalk.bold(data.attr+'(s)')+ ' of '+chalk.bold(data.item)+
+	' are '+ (commaAnd(edges)).join(''));
+	return false;
 }
 
 function commaAnd(collection){

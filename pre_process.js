@@ -31,14 +31,16 @@ module.exports = function(input){
 	else if(isASimpleDescription(input)){
 		var item = singular(input[0])
 		var attribute = singular(input[2])
-		return { type: 'attr', item, attribute }		
+		return { type: 'attr', item, attribute }
 	}
 	else if(isADefinition(input)){
 		var firstIndex = aOrAn(input[0]) ? 1 : 0;
+		var ofIndex = input.indexOf('of');
 		var subtype = singular(input[firstIndex  ])
 		var parent =  singular(input[firstIndex+3])
+		var third = ofIndex < 0 ? null : input[ofIndex+1];
 
-		return { type: 'entry', subtype, parent }
+		return { type: 'entry', subtype, parent, third }
 	}
 	else if(isAQuery(input)){
 		var item = input[input.length-1];
@@ -46,6 +48,11 @@ module.exports = function(input){
 	}
 	else if(isAnAdjective(input)){
 		return { type: 'adj', name: input[3] }
+	}
+	else if(isAComplexQuery(input)){
+		var attr = singular(input[3]);
+		var item = singular(input[5]);
+		return { type: 'complex', attr, item }
 	}
 }
 
@@ -81,7 +88,7 @@ function isADefinition(line){
 	return ((
 		aOrAn(line[0]) &&
 		line[2] === 'is'&&
-		aOrAn(line[3])  
+		aOrAn(line[3])
 	) || (
 		isOrAre(line[1]) &&
 		aOrAn(line[2])
@@ -106,6 +113,15 @@ function isAnAdjective(line){
 		line[1] === 'things'&&
 		line[2] === 'are'
 	//  line[3] === adjective
+	)
+}
+
+function isAComplexQuery(line){
+	return (
+		line[0] === 'what'&&
+		line[1] === 'are'&&
+		line[2] === 'the'&&
+		line[4] === 'of'
 	)
 }
 
