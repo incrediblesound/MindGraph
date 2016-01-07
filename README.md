@@ -36,6 +36,16 @@ Does man_made_object also have attribute imaginitive? > yes
 > a painting is a man_made_object
 Does the subtype painting share attribute imaginitive with parent? >
 ```
+
+### Complex Description
+
+*store an attribute as a subclass of an attribute of a thing*
+```code
+> wartime is a state of America
+> peacetime is a state of America
+> red is a color of hat
+> blue is a color of hat
+```
 ## Queries
 
 ### Subclass Question
@@ -66,6 +76,16 @@ Yes, icecream is sweet.
 > what is icecream?
 icecream is a kind of dessert.
 icecream has the attribute(s) sweet.
+```
+
+### Complex Query
+
+*ask about the kinds of an attribute of a thing*
+```code
+> what are the states of America
+The state(s) of america are wartime, and peacetime
+> what are the colors of hat
+The color(s) of hat are red, and blue
 ```
 
 ## Commands
